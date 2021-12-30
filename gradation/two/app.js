@@ -1,6 +1,6 @@
 import { Ripple } from './ripple.js';
 import { Dot } from './dot.js';
-import { collide } from './utils.js';
+import { collide, getBWValue } from './utils.js';
 
 class App {
     constructor() {
@@ -24,7 +24,7 @@ class App {
         this.resize();
 
         this.radius = 10;
-        this.pixelSize = 30;
+        this.pixelSize = 10;
         this.dots = [];
 
         this.isLoaded = false;
@@ -36,7 +36,7 @@ class App {
         }
 
         this.image = new Image();
-        this.image.src = './img/real.png';
+        this.image.src = './img/wak.png';
         this.image.onload = () => {
             this.isLoaded = true;
             this.drawImage();
@@ -89,14 +89,6 @@ class App {
             )
         }
 
-        this.ctx.drawImage(
-            this.image,
-            0, 0,
-            this.image.width, this.image.height,
-            this.imgPos.x, this.imgPos.y,
-            this.imgPos.width, this.imgPos.height
-        )
-
         this.tmpCtx.drawImage(
             this.image,
             0, 0,
@@ -128,21 +120,27 @@ class App {
                 const red = this.imgData.data[pixelIndnx + 0];
                 const green = this.imgData.data[pixelIndnx + 1];
                 const blue = this.imgData.data[pixelIndnx + 2];
+                const scale = getBWValue(red, green, blue, false);
 
                 const dot = new Dot(
                     x, y,
                     this.radius,
                     this.pixelSize,
-                    red, green, blue
+                    red, green, blue,
+                    scale
                 );
-
-                this.dots.push(dot);
+                
+                if (dot.targetRadius > 0.1) {
+                    this.dots.push(dot);
+                }
             }
         }
     }
 
     animate() {
         window.requestAnimationFrame(this.animate.bind(this));
+
+        this.ctx.clearRect(0, 0, this.stageWidth, this.stageHeight);
 
         this.ripple.animate();
 
@@ -160,14 +158,6 @@ class App {
         for (let i = 0; i < this.dots.length; i++) {
             this.dots[i].reset();
         }
-
-        this.ctx.drawImage(
-            this.image,
-            0, 0,
-            this.image.width, this.image.height,
-            this.imgPos.x, this.imgPos.y,
-            this.imgPos.width, this.imgPos.height,
-        );
         
         this.ripple.start(e.offsetX, e.offsetY)
     }
