@@ -155,6 +155,12 @@ class App {
     }
 
     onClick(e) {
+        this.ctx.clearRect(0, 0, this.stageWidth, this.stageHeight); // 물결효과 다시 하기 위한 초기화
+
+        for (let i = 0; i < this.dots.length; i++) {
+            this.dots[i].reset();
+        }
+
         this.ctx.drawImage(
             this.image,
             0, 0,
