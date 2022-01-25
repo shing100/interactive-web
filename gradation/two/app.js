@@ -36,7 +36,7 @@ class App {
         }
 
         this.image = new Image();
-        this.image.src = './img/wak.png';
+        this.image.src = './img/genum.png';
         this.image.onload = () => {
             this.isLoaded = true;
             this.drawImage();
